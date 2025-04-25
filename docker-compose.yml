@@ -1,0 +1,38 @@
+version: '3'
+services:
+  taiga:
+    image: taigaio/taiga-back:latest
+    environment:
+      - TAIGA_SECRET_KEY=ваш_секретный_ключ
+      - TAIGA_URL=ваш-домен-или-ip
+      - POSTGRES_USER=taiga
+      - POSTGRES_PASSWORD=taiga
+      - POSTGRES_DB=taiga
+    volumes:
+      - taiga_data:/taiga-back
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=taiga
+      - POSTGRES_PASSWORD=taiga
+      - POSTGRES_DB=taiga
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:6
+
+  taiga-front:
+    image: taigaio/taiga-front:latest
+    ports:
+      - "80:80"
+    depends_on:
+      - taiga
+
+volumes:
+  taiga_data:
+  postgres_data:
